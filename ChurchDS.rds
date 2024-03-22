@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RptDataSource xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Name="ChurchDS">
+  <ConnectionProperties>
+    <Extension>SQL</Extension>
+    <ConnectString>Data Source=192.168.1.104;Initial Catalog=Church</ConnectString>
+  </ConnectionProperties>
+  <DataSourceID>898d74e1-cb03-478e-b21a-bf5459f59904</DataSourceID>
+</RptDataSource>

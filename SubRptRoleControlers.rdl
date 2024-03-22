@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="RoleControlers">
+      <DataSourceReference>ChurchDS</DataSourceReference>
+      <rd:SecurityType>None</rd:SecurityType>
+      <rd:DataSourceID>d6e9034b-8c40-46e2-a5da-9ed7600e00c6</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="DataSet1">
+      <Query>
+        <DataSourceName>RoleControlers</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@GroupId">
+            <Value>=Parameters!GroupId.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <CommandText>SELECT  gm.GroupManagerId
+       ,gm.GroupId
+       ,g.GroupName
+       ,gm.CustomerId
+       ,FullName = c.LastName + ', ' + c.FirstName
+       ,p.PhoneNumber
+FROM dbo.GroupManager gm
+JOIN dbo.[Group] g ON gm.GroupId = g.GroupId
+JOIN dbo.Customer c ON c.CustomerId = gm.CustomerId
+JOIN dbo.Phone p ON c.PhoneBookId = p.PhoneBookId AND p.PhoneTypeId = gm.ContactPhoneTypeId
+WHERE g.GroupId = @GroupId
+ORDER BY FullName</CommandText>
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+      </Query>
+      <Fields>
+        <Field Name="GroupManagerId">
+          <DataField>GroupManagerId</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="GroupId">
+          <DataField>GroupId</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="GroupName">
+          <DataField>GroupName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CustomerId">
+          <DataField>CustomerId</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="FullName">
+          <DataField>FullName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PhoneNumber">
+          <DataField>PhoneNumber</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="ContollersDS">
+      <Query>
+        <DataSourceName>RoleControlers</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@GroupId">
+            <Value>=Parameters!GroupId.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <CommandText>Declare @Controlers nvarchar(max) = ''
+
+SELECT  @Controlers = coalesce(@Controlers + ' | ' + (p.PhoneNumber + ' ' + c.FirstName + ', ' + c.LastName), '')
+FROM dbo.GroupManager gm
+JOIN dbo.[Group] g ON gm.GroupId = g.GroupId
+JOIN dbo.Customer c ON c.CustomerId = gm.CustomerId
+JOIN dbo.Phone p ON c.PhoneBookId = p.PhoneBookId AND p.PhoneTypeId = gm.ContactPhoneTypeId
+WHERE g.GroupId = @GroupId
+order by c.LastName
+
+SELECT substring(@Controlers,4,1000) as Controlers</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="Controlers">
+          <DataField>Controlers</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <ReportItems>
+          <Textbox Name="Controlers">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>="По вопросам звоните" &amp; vbcrlf &amp; First(Fields!Controlers.Value, "ContollersDS")</Value>
+                    <Style>
+                      <FontFamily>Verdana</FontFamily>
+                      <FontSize>7pt</FontSize>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Center</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Controlers</rd:DefaultName>
+            <Top>0.00917in</Top>
+            <Height>0.19792in</Height>
+            <Width>5.14583in</Width>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+        </ReportItems>
+        <Height>0.20708in</Height>
+        <Style />
+      </Body>
+      <Width>5.155in</Width>
+      <Page>
+        <PageHeight>0.25in</PageHeight>
+        <ColumnSpacing>0in</ColumnSpacing>
+        <Style />
+      </Page>
+    </ReportSection>
+  </ReportSections>
+  <ReportParameters>
+    <ReportParameter Name="GroupId">
+      <DataType>String</DataType>
+      <Prompt>Group Id</Prompt>
+    </ReportParameter>
+  </ReportParameters>
+  <ReportParametersLayout>
+    <GridLayoutDefinition>
+      <NumberOfColumns>1</NumberOfColumns>
+      <NumberOfRows>1</NumberOfRows>
+      <CellDefinitions>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>GroupId</ParameterName>
+        </CellDefinition>
+      </CellDefinitions>
+    </GridLayoutDefinition>
+  </ReportParametersLayout>
+  <rd:ReportUnitType>Inch</rd:ReportUnitType>
+  <rd:ReportID>aba52b11-f015-41c2-a136-e5df3d6d0a83</rd:ReportID>
+</Report>
